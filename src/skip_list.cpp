@@ -59,7 +59,7 @@ void
 SkipList<Value>::_walk(Value val, SkipListNode<Value> **prev) {
 	for(int i=0; i<_max_level; i++) {
 		prev[i] = _head + i;
-		while(prev[i]->getNext() != _head + i && prev[i]->getNext()->getValue() < val) {
+		while(prev[i]->getNext() != _head + i && prev[i]->getNext()->getValue() <= val) {
 			prev[i] = prev[i]->getNext();
 		}
 	}
@@ -72,11 +72,11 @@ SkipList<Value>::find(Value val) {
 	bool ans = false;
 	SkipListNode<Value> **prev = new SkipListNode<Value>*[_max_level];
 	_walk(val, prev);
-	if(prev != _head && prev->_value == val) {
+	if((*prev) != _head && (*prev)->getValue() == val) {
 		ans = true;
 	}
 	delete[] prev;
-
+	return ans;
 }
 
 template<class Value>
@@ -84,7 +84,9 @@ void
 SkipList<Value>::insert(Value val) {
 	SkipListNode<Value> **prev = new SkipListNode<Value>*[_max_level];
 	_walk(val, prev);
-
+	if((*prev) != _head && (*prev)->getValue() == val) {
+		return;
+	}
 	SkipListNode<Value> *parent = NULL;
 	int level = _rand_gen->getRandomLevel();
 	for(int i = level; i >= 0; i--) {
@@ -122,10 +124,45 @@ using nomind::SkipList;
 using std::cout;
 using std::endl;
 
-int main(int argc, char **argv) {
+void test(int setCount, int getCount) {
+	int max_int = 1000000;
+	int setter = 0, getter = 0;
 	SkipList<int> skip_list;
+
+	while(setter < setCount && getter < getCount) {
+		int v = rand() % max_int;
+		if(rand()%2 == 1) {
+			skip_list.insert(v);
+			setter++;
+		} else {
+			skip_list.find(v);
+			getter++;
+		}
+	}
+
+	while(setter < setCount) {
+		int v = rand() % max_int;
+		skip_list.insert(v);
+		setter++;
+	}
+
+	while(getter < getCount) {
+		int v = rand() % max_int;
+		skip_list.find(v);
+		getter++;
+	}
+
+	return;
+}
+
+int main(int argc, char **argv) {
+	/*SkipList<int> skip_list;
 	skip_list.insert(2);
 	skip_list.insert(3);
-	skip_list.print();
+	skip_list.insert(3);
+	skip_list.print();*/
+
+	test(100000, 100000);
+
 	return 0;
 }
