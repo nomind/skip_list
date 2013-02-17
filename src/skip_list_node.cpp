@@ -31,7 +31,7 @@ SkipListNode<Value>::SkipListNode() {
 template<class Value>
 SkipListNode<Value>::~SkipListNode() {
 	if(_next != NULL) {
-		//delete _next;
+		delete _next;
 	}
 }
 

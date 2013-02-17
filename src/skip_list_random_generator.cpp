@@ -1,11 +1,15 @@
 
-#include "cstdlib"
+#include <cstdlib>
+#include <iostream>
 
 namespace nomind {
 
+using std::cout;
+using std::endl;
+
 class SkipListRandomGenerator {
 private:
-	const static int _DEFAULT_MAX_LEVEL = 5;
+	const static int _DEFAULT_MAX_LEVEL = 12;
 
 protected:
 	int max_level;
@@ -15,6 +19,7 @@ public:
 	SkipListRandomGenerator();
 	virtual ~SkipListRandomGenerator();
 
+	virtual void stats() = 0;
 	virtual int getMaxLevel() = 0;
 	virtual int getRandomLevel() = 0;
 };
@@ -38,16 +43,22 @@ SkipListRandomGenerator::~SkipListRandomGenerator() {
 }
 
 class SimpleSkipListRandomGenerator : public SkipListRandomGenerator {
-
+private:
+	int *_level_counter;
 public:
 	SimpleSkipListRandomGenerator();
+
+	void stats();
 	int getMaxLevel();
 	int getRandomLevel();
 
 };
 
 SimpleSkipListRandomGenerator::SimpleSkipListRandomGenerator() {
-
+	_level_counter = new int[max_level];
+	for(int i=0; i<max_level; i++) {
+		_level_counter[i] = 0;
+	}
 }
 
 int
@@ -61,7 +72,15 @@ SimpleSkipListRandomGenerator::getRandomLevel() {
 	while(rand()%2 == 1 && level < max_level - 1) {
 		level++;
 	}
+	_level_counter[level]++;
 	return level;
+}
+
+void
+SimpleSkipListRandomGenerator::stats() {
+	for(int i=0; i<max_level; i++) {
+		cout<<i<<" "<<_level_counter[i]<<endl;
+	}
 }
 
 }
