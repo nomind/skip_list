@@ -34,6 +34,8 @@ MemAlloc::MemAlloc() {
 
 char*
 MemAlloc::alloc(size_t bytes) {
+    //return new char[bytes];
+
 	if(_mem_available >= bytes) {
 		char *result = _mem_ptr;
 		_mem_ptr += bytes;
@@ -202,14 +204,3 @@ void test(int setCount, int getCount) {
 	return;
 }
 
-int main(int argc, char **argv) {
-	/*SkipList<int> skip_list;
-	skip_list.insert(2);
-	skip_list.insert(3);
-	skip_list.insert(3);
-	skip_list.print();
-	*/
-	test(1000000, 1000000);
-
-	return 0;
-}
